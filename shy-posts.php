@@ -97,12 +97,9 @@ class Shy_Posts_New {
 	public function save( $post_id ) {
 
 		// Check if the current user is authorised to do this action. 
-		if ( 'page' == $_REQUEST['post_type'] ) {
-			if ( ! current_user_can( 'edit_page', $post_id ) )
-				return;
-		} else {
-			if ( ! current_user_can( 'edit_post', $post_id ) )
-				return;
+		$post_type = get_post_type_object( get_post( $post_id )->post_type );
+		if ( ! current_user_can( $post_type->cap->edit_post, $post_id ) ) {
+			return;
 		}
 
 		// Check if the user intended to change this value.
