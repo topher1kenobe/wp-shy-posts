@@ -83,12 +83,12 @@ class Shy_Posts_New {
 		$checked = $value['shy_post'];
 
 		// echo the meta box
-        echo '<div class="misc-pub-section misc-pub-section-last">';
+		echo '<div class="misc-pub-section misc-pub-section-last">';
 		echo '<input type="checkbox" id="shyposts_hide_field" name="shyposts_hide_field" value="1" ' . checked( $checked, true, false ) . '" title="' . __('Removes this post from the homepage, but NOT from any other page', $this->text_domain) . '"> ';
 		echo '<label for="shyposts_hide_field" title="' . __('Removes this post from the homepage, but NOT from any other page', $this->text_domain) . '">';
 		echo __( 'Hide on the homepage?', $this->text_domain);
 		echo '</label> ';
-        echo '</div>';
+		echo '</div>';
 	}
 
 
@@ -101,7 +101,7 @@ class Shy_Posts_New {
 	 */
 	public function save( $post_id ) {
 
-		// Check if the current user is authorised to do this action. 
+		// Check if the current user is authorised to do this action.
 		if ( 'page' == $_REQUEST['post_type'] ) {
 			if ( ! current_user_can( 'edit_page', $post_id ) )
 				return;
