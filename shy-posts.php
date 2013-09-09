@@ -21,7 +21,7 @@ Author URI: http://codeventure.net
  * Instantiate the Shy_Posts object
  * @since Shy_Posts 1.0
  */
-return new Shy_Posts_New();
+return new Shy_Posts();
 
 /**
  * Main Shy Posts Class
@@ -34,7 +34,25 @@ return new Shy_Posts_New();
  * @package Shy_Posts
  * @author Topher
  */
-class Shy_Posts_New {
+class Shy_Posts {
+
+	/**
+ 	* Holds array of post IDs that are shy.
+ 	*
+ 	* @access private
+ 	* @since 1.2
+ 	* @var array
+ 	*/
+	private $shy_post_ids = NULL;
+
+	/**
+ 	* Transient name
+ 	*
+ 	* @access private
+ 	* @since 1.2
+ 	* @var string
+ 	*/
+	private $shy_post_transient_name = 'shy_posts_transient';
 
 	/**
 	 * Shy_Posts Constructor
@@ -43,6 +61,11 @@ class Shy_Posts_New {
 	 * @return void
 	 */
 	public function __construct() {
+
+		// get the shy posts transient
+		$this->get_shy_post_ids();
+
+		register_activation_hook( __FILE__, array( 'Shy_Posts', 'install' ) );
 
 		// only do this in the admin area
 		if ( is_admin() ) {
@@ -55,6 +78,82 @@ class Shy_Posts_New {
 			// filter the homepage loop
 			add_action( 'pre_get_posts', array( $this, 'exclude_shy_posts_from_homepage' ) );
 		}
+
+	}
+
+	/**
+	 * On activation, get all the post ids from post meta data and store them in the transient
+	 *
+	 * @static
+	 * @return void
+	 */
+	 static function install() {
+
+		$args = array(
+			'post_status' => 'publish'
+			,'post_type' => 'post'
+			,'no_found_rows' => true
+			,'nopaging' => true
+			,'fields' => 'ids'
+			,'meta_query' => array(
+				array(
+					'key' => 'shy_post',
+					'value' => '1',
+					'compare' => '='
+				)
+			)
+		);
+
+		$shy_post_ids = get_posts($args);
+
+		set_transient( 'shy_posts_transient', $shy_post_ids, 60 * 60 * 24 * 365 );
+
+	 }
+
+	/**
+	 * Get shy post IDs
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_shy_post_ids() {
+
+		$shy_post_ids = get_transient( $this->shy_post_transient_name );
+
+		if(!is_array($shy_post_ids)) {
+			$shy_post_ids = array();
+		}
+
+		$this->shy_post_ids = $shy_post_ids;
+
+	}
+
+	/**
+	 * Update the shy_posts_transient
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function update_transient( $post_id, $shydata) {
+
+
+		if($shydata != 1) {
+			// invert the post ids array so we can delete by key
+			$shy_post_ids_flipped = array_flip($this->shy_post_ids);
+
+			// delete the one we don't want anymore
+			unset($shy_post_ids_flipped[$post_id]);
+
+			// flip it back
+			$this->shy_post_ids = array_flip($shy_post_ids_flipped);
+		} else {
+			// add this post_id to the array
+			$this->shy_post_ids[] = $post_id;
+		}
+		
+		// save it back
+		set_transient( $this->shy_post_transient_name, $this->shy_post_ids, 60 * 60 * 24 * 365 );
+
 	}
 
 	/**
@@ -111,6 +210,9 @@ class Shy_Posts_New {
 
 		// Update or create the key/value
 		update_post_meta( $post_id, 'shy_post', $shydata );
+
+		$this->update_transient( $post_id, $shydata );
+
 	}
 
 	/**
@@ -123,31 +225,10 @@ class Shy_Posts_New {
 	public function exclude_shy_posts_from_homepage( $query ) {
 		// make sure we're looking in the right place, !is_admin is a safety net
 		if ( is_front_page() AND $query->is_main_query() ) {
-			// set a meta query to exclude posts that have the shy_posts val set to 1
 
-			$shy_meta_query = array(
-				array(
-					'key' => 'shy_post',
-					'value' => '1',
-					'compare' => '!='
-				),
-				'relation' => 'OR',
-				array(
-					'key' => 'shy_post',
-					'value' => '1',
-					'compare' => 'NOT EXISTS'
-				),
-			);
+			// exclude all posts in the array of hidden posts
+			$query->set('post__not_in', $this->shy_post_ids);
 
-			$outer_query = $query->get('meta_query');
-
-			if(is_array($query->get('meta_query'))) {
-				$meta_query = array_merge($query->get('meta_query'), $shy_meta_query);
-			} else {
-				$meta_query = $shy_meta_query;
-			}
-
-			$query->set('meta_query', $meta_query);
 		}
 	}
 
