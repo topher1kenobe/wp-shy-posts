@@ -124,7 +124,8 @@ class Shy_Posts_New {
 		// make sure we're looking in the right place, !is_admin is a safety net
 		if ( is_front_page() AND $query->is_main_query() ) {
 			// set a meta query to exclude posts that have the shy_posts val set to 1
-			$query->set('meta_query', array(
+
+			$shy_meta_query = array(
 				array(
 					'key' => 'shy_post',
 					'value' => '1',
@@ -136,7 +137,17 @@ class Shy_Posts_New {
 					'value' => '1',
 					'compare' => 'NOT EXISTS'
 				),
-			) );
+			);
+
+			$outer_query = $query->get('meta_query');
+
+			if(is_array($query->get('meta_query'))) {
+				$meta_query = array_merge($query->get('meta_query'), $shy_meta_query);
+			} else {
+				$meta_query = $shy_meta_query;
+			}
+
+			$query->set('meta_query', $meta_query);
 		}
 	}
 
