@@ -71,6 +71,7 @@ class Shy_Posts {
 		if ( is_admin() ) {
 			add_action( 'save_post', array( $this, 'save' ) );
 			add_action( 'post_submitbox_misc_actions', array( $this, 'option_hide_in_publish' ) );
+			add_filter( 'is_protected_meta', array( $this, 'hide_field' ), 10, 2 );
 		}
 
 		// only do this NOT in the admin area
@@ -109,6 +110,17 @@ class Shy_Posts {
 		set_transient( 'shy_posts_transient', $shy_post_ids, 60 * 60 * 24 * 365 );
 
 	 }
+
+	/**
+	 * Filter the post meta field so it doesn't appear in the Custom Fields list
+	 *
+	 * @access private
+	 * @return bool
+	 */
+	public function hide_field( $protected, $meta_key ) {
+		if ( 'shy_post' == $meta_key ) return true;
+		return $protected;
+	}
 
 	/**
 	 * Get shy post IDs
