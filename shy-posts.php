@@ -37,11 +37,6 @@ return new Shy_Posts_New();
 class Shy_Posts_New {
 
 	/**
-	 * @var string
-	 */
-	public $text_domain = 'shyposts';
-
-	/**
 	 * Shy_Posts Constructor
 	 *
 	 * @access public
@@ -84,9 +79,9 @@ class Shy_Posts_New {
 
 		// echo the meta box
 		echo '<div class="misc-pub-section misc-pub-section-last">';
-		echo '<input type="checkbox" id="shyposts_hide_field" name="shyposts_hide_field" value="1" ' . checked( $checked, true, false ) . '" title="' . esc_attr__('Removes this post from the homepage, but NOT from any other page', $this->text_domain) . '"> ';
-		echo '<label for="shyposts_hide_field" title="' . esc_attr__('Removes this post from the homepage, but NOT from any other page', $this->text_domain) . '">';
-		echo __( 'Hide on the homepage?', $this->text_domain);
+		echo '<input type="checkbox" id="shyposts_hide_field" name="shyposts_hide_field" value="1" ' . checked( $checked, true, false ) . '" title="' . esc_attr__('Removes this post from the homepage, but NOT from any other page', 'shyposts') . '"> ';
+		echo '<label for="shyposts_hide_field" title="' . esc_attr__('Removes this post from the homepage, but NOT from any other page', 'shyposts') . '">';
+		echo __( 'Hide on the homepage?', 'shyposts');
 		echo '</label> ';
 		echo '</div>';
 	}
