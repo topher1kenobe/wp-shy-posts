@@ -21,7 +21,7 @@ Author URI: http://codeventure.net
  * Instantiate the Shy_Posts instance
  * @since Shy_Posts 1.0
  */
-Shy_Posts::instance();
+add_action( 'plugins_loaded', array( 'Shy_Posts', 'instance' ) );
 
 /**
  * Main Shy Posts Class
