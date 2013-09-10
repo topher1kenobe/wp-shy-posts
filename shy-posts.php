@@ -18,10 +18,12 @@ Author URI: http://codeventure.net
 
 
 /**
- * Instantiate the Shy_Posts object
+ * Instantiate the Shy_Posts instance
  * @since Shy_Posts 1.0
  */
-return new Shy_Posts();
+add_action( 'plugins_loaded', function () {
+	Shy_Posts::instance();
+} );
 
 /**
  * Main Shy Posts Class
@@ -55,13 +57,44 @@ class Shy_Posts {
 	private $shy_post_transient_name = 'shy_posts_transient';
 
 	/**
-	 * Shy_Posts Constructor
+ 	* Instance handle
+ 	*
+ 	* @static
+ 	* @since 1.2
+ 	* @var string
+ 	*/
+    private static $__instance = null;
+ 
+	/**
+	 * Shy_Posts Constructor, actually contains nothing
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function __construct() {
-
+    private function __construct() {}
+ 
+	/**
+	 * Instance initiator, runs setup etc.
+	 *
+	 * @access public
+	 * @return self
+	 */
+    public static function instance() {
+        if ( ! is_a( self::$__instance, __CLASS__ ) ) {
+            self::$__instance = new self;
+            self::$__instance->setup();
+        }
+ 
+        return self::$__instance;
+    }
+ 
+	/**
+	 * Runs things that would normally be in __construct
+	 *
+	 * @access private
+	 * @return void
+	 */
+    private function setup() {
 		// get the shy posts transient
 		$this->get_shy_post_ids();
 
@@ -79,8 +112,7 @@ class Shy_Posts {
 			// filter the homepage loop
 			add_action( 'pre_get_posts', array( $this, 'exclude_shy_posts_from_homepage' ) );
 		}
-
-	}
+    }
 
 	/**
 	 * On activation, get all the post ids from post meta data and store them in the transient
