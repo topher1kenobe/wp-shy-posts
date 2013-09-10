@@ -118,7 +118,9 @@ class Shy_Posts {
 	 * @return bool
 	 */
 	public function hide_field( $protected, $meta_key ) {
-		if ( 'shy_post' == $meta_key ) return true;
+		if ( 'shy_post' == $meta_key ) {
+			$protected = true;
+		}
 		return $protected;
 	}
 
