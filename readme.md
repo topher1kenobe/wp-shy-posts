@@ -6,8 +6,8 @@ Provides a checkbox on a post admin page to allow you to say that THIS post shou
 **Contributors:** [topher1kenobe](http://profiles.wordpress.org/topher1kenobe)  
 **Tags:** [posts](http://wordpress.org/plugins/tags/posts)  
 **Requires at least:** 3.0  
-**Tested up to:** 3.6  
-**Stable tag:** 1.2  
+**Tested up to:** 3.6.1  
+**Stable tag:** 1.3  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
 
 ## Description ##
@@ -34,6 +34,12 @@ I haven't been asked any yet.  :)
 
 
 ## Changelog ##
+
+### 1.3 ###
+* Store shy post IDs in a transient
+* Make exclusion query use transient
+* New query is much MUCH faster
+* Various input sanitizations
 
 ### 1.2 ###
 * Make the checkbox be in the Publish box instead of a custom meta box
