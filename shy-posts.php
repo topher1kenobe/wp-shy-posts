@@ -267,7 +267,7 @@ class Shy_Posts {
 	 * @return void
 	 */
 	public function exclude_shy_posts_from_homepage( $query ) {
-		// make sure we're looking in the right place, !is_admin is a safety net
+		// make sure we're looking in the right place
 		if ( is_front_page() AND $query->is_main_query() ) {
 
 			// exclude all posts in the array of hidden posts
