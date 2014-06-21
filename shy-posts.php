@@ -218,7 +218,7 @@ class Shy_Posts {
 		$value = get_post_meta( $post->ID, 'shy_post', true );
 
 		// get the value of the option we want
-		$checked = $value['shy_post'];
+		$checked = $value;
 
 		// echo the meta box
 		echo '<div class="misc-pub-section misc-pub-section-last">';
