@@ -4,7 +4,7 @@ Plugin Name: Shy Posts
 Plugin URI: http://codeventure.net
 Description: Provides a mechanism for preventing posts from being rendered on the homepage loop
 Author: Topher
-Version: 1.3
+Version: 1.3.2
 Author URI: http://codeventure.net
 */
 

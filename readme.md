@@ -6,8 +6,8 @@ Provides a checkbox on a post admin page to allow you to say that THIS post shou
 **Contributors:** [topher1kenobe](http://profiles.wordpress.org/topher1kenobe)  
 **Tags:** [posts](http://wordpress.org/plugins/tags/posts)  
 **Requires at least:** 3.0  
-**Tested up to:** 3.9.1  
-**Stable tag:** 1.3.1  
+**Tested up to:** 4.0  
+**Stable tag:** 1.3.2  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
 
 ## Description ##
@@ -34,6 +34,9 @@ I haven't been asked any yet.  :)
 
 
 ## Changelog ##
+
+### 1.3.2 ###
+Check for WP 4.0
 
 ### 1.3.1 ###
 * Minor bug fix regarding storage method

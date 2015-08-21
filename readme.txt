@@ -2,8 +2,8 @@
 Contributors: topher1kenobe
 Tags: posts
 Requires at least: 3.0
-Tested up to: 3.9.1
-Stable tag: 1.3.1
+Tested up to: 4.3
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,9 @@ I haven't been asked any yet.  :)
 1. The checkbox in the Publish box on the Post editing page
 
 == Changelog ==
+
+= 1.3.2 =
+Check for WP 4.0
 
 = 1.3.1 =
 * Minor bug fix regarding storage method
