@@ -103,6 +103,7 @@ class Shy_Posts {
 			add_action( 'save_post', array( $this, 'save' ) );
 			add_action( 'post_submitbox_misc_actions', array( $this, 'option_hide_in_publish' ) );
 			add_filter( 'is_protected_meta', array( $this, 'hide_field' ), 10, 2 );
+			add_action( 'init', array( $this, 'load_textdomain' ) );
 		}
 
 		// only do this NOT in the admin area
@@ -140,6 +141,15 @@ class Shy_Posts {
 		set_transient( 'shy_posts_transient', $shy_post_ids, 60 * 60 * 24 * 365 );
 
 	 }
+	/**
+	 * Load plugin textdomain.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain( 'shyposts', false, plugin_basename( dirname( __FILE__ ) ) );
+	}
 
 	/**
 	 * Filter the post meta field so it doesn't appear in the Custom Fields list
