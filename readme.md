@@ -36,8 +36,8 @@ I haven't been asked any yet.  :)
 ## Changelog ##
 
 ### 1.3.3 ###
-* Added load_plugin_textdomain to allow trasnlations
-* Check for WP 4.5
+* Added load_plugin_textdomain to allow translations
+* Check for WP 4.7
 
 ### 1.3.2 ###
 * Check for WP 4.0
