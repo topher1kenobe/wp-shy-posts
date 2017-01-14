@@ -144,7 +144,7 @@ class Shy_Posts {
 	/**
 	 * Load plugin textdomain.
 	 *
-	 * @access private
+	 * @access public
 	 * @return void
 	 */
 	public function load_textdomain() {
