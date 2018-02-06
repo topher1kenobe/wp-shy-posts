@@ -4,7 +4,7 @@ Plugin Name: Shy Posts
 Plugin URI: http://codeventure.net
 Description: Provides a mechanism for preventing posts from being rendered on the homepage loop
 Author: Topher
-Version: 1.3.2
+Version: 1.3.3
 Author URI: http://codeventure.net
 */
 
@@ -29,7 +29,7 @@ add_action( 'plugins_loaded', array( 'Shy_Posts', 'instance' ) );
  * Contains the main functions for the admin side of Shy Posts
  *
  * @class Shy_Posts
- * @version 1.0.0
+ * @version 1.3.3
  * @since 1.0
  * @package Shy_Posts
  * @author Topher
@@ -103,6 +103,7 @@ class Shy_Posts {
 			add_action( 'save_post', array( $this, 'save' ) );
 			add_action( 'post_submitbox_misc_actions', array( $this, 'option_hide_in_publish' ) );
 			add_filter( 'is_protected_meta', array( $this, 'hide_field' ), 10, 2 );
+			add_action( 'init', array( $this, 'load_textdomain' ) );
 		}
 
 		// only do this NOT in the admin area
@@ -140,6 +141,15 @@ class Shy_Posts {
 		set_transient( 'shy_posts_transient', $shy_post_ids, 60 * 60 * 24 * 365 );
 
 	 }
+	/**
+	 * Load plugin textdomain.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain( 'shy-posts', false, plugin_basename( dirname( __FILE__ ) ) );
+	}
 
 	/**
 	 * Filter the post meta field so it doesn't appear in the Custom Fields list
@@ -222,9 +232,9 @@ class Shy_Posts {
 
 		// echo the meta box
 		echo '<div class="misc-pub-section misc-pub-section-last">';
-		echo '<input type="checkbox" id="shyposts_hide_field" name="shyposts_hide_field" value="1" ' . checked( $checked, true, false ) . '" title="' . esc_attr__('Removes this post from the homepage, but NOT from any other page', 'shyposts') . '"> ';
-		echo '<label for="shyposts_hide_field" title="' . esc_attr__('Removes this post from the homepage, but NOT from any other page', 'shyposts') . '">';
-		echo __( 'Hide on the homepage?', 'shyposts');
+		echo '<input type="checkbox" id="shyposts_hide_field" name="shyposts_hide_field" value="1" ' . checked( $checked, true, false ) . '" title="' . esc_attr__('Removes this post from the homepage, but NOT from any other page', 'shy-posts') . '"> ';
+		echo '<label for="shyposts_hide_field" title="' . esc_attr__('Removes this post from the homepage, but NOT from any other page', 'shy-posts') . '">';
+		echo __( 'Hide on the homepage?', 'shy-posts');
 		echo '</label> ';
 		echo '</div>';
 	}

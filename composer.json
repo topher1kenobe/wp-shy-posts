@@ -1,0 +1,16 @@
+{
+  "name": "topher1kenobe/wp-shy-posts",
+  "description": "Provides a checkbox on a post admin page to allow you to say that THIS post should not appear on the homepage blog loop.",
+  "type": "wordpress-plugin",
+  "license": "GPLv2 or later",
+  "authors": [
+    {
+      "name": "Topher DeRosia",
+      "homepage": "http://codeventure.net/",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+  }
+}
+

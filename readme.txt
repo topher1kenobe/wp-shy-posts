@@ -2,8 +2,8 @@
 Contributors: topher1kenobe
 Tags: posts
 Requires at least: 3.0
-Tested up to: 4.3
-Stable tag: 1.3.2
+Tested up to: 4.5.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,8 +35,12 @@ I haven't been asked any yet.  :)
 
 == Changelog ==
 
+= 1.3.3 =
+* Added load_plugin_textdomain to allow translations
+* Check for WP 4.7
+
 = 1.3.2 =
-Check for WP 4.0
+* Check for WP 4.0
 
 = 1.3.1 =
 * Minor bug fix regarding storage method
