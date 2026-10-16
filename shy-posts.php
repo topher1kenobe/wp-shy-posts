@@ -1,33 +1,33 @@
 <?php
-/*
-Plugin Name: Shy Posts
-Plugin URI: http://codeventure.net
-Description: Provides a mechanism for preventing posts from being rendered on the homepage loop
-Author: Topher
-Version: 2.0.0
-Author URI: http://codeventure.net
-Text Domain: shy-posts
-License: GPLv2 or later
-*/
-
 /**
- * Provides a mechanism for preventing posts from being rendered on the homepage loop
+ * Plugin Name: Shy Posts
+ * Plugin URI: http://codeventure.net
+ * Description: Provides a mechanism for preventing posts from being rendered on the homepage loop
+ * Author: Topher
+ * Version: 2.0.0
+ * Author URI: http://codeventure.net
+ * Text Domain: shy-posts
+ * License: GPLv2 or later
  *
  * @package Shy_Posts
  * @since Shy_Posts 1.0
  * @author Topher
  */
 
+// The main plugin file can't be renamed to class-shy-posts.php without deactivating the plugin on existing sites.
+// phpcs:disable WordPress.Files.FileName
 
 /**
  * Build the list of shy post IDs on activation.
  * This must be registered when the file loads, not on plugins_loaded, or it never fires.
+ *
  * @since Shy_Posts 2.0
  */
 register_activation_hook( __FILE__, array( 'Shy_Posts', 'install' ) );
 
 /**
  * Instantiate the Shy_Posts instance
+ *
  * @since Shy_Posts 1.0
  */
 add_action( 'plugins_loaded', array( 'Shy_Posts', 'instance' ) );
@@ -52,7 +52,7 @@ class Shy_Posts {
 	 * @since 1.2
 	 * @var array|null
 	 */
-	private $shy_post_ids = NULL;
+	private $shy_post_ids = null;
 
 	/**
 	 * Option name the shy post IDs are stored in
@@ -93,7 +93,7 @@ class Shy_Posts {
 	 * @since 1.2
 	 * @var Shy_Posts
 	 */
-	private static $__instance = null;
+	private static $instance = null;
 
 	/**
 	 * Shy_Posts Constructor, actually contains nothing
@@ -110,12 +110,12 @@ class Shy_Posts {
 	 * @return self
 	 */
 	public static function instance() {
-		if ( ! is_a( self::$__instance, __CLASS__ ) ) {
-			self::$__instance = new self;
-			self::$__instance->setup();
+		if ( ! is_a( self::$instance, __CLASS__ ) ) {
+			self::$instance = new self();
+			self::$instance->setup();
 		}
 
-		return self::$__instance;
+		return self::$instance;
 	}
 
 	/**
@@ -125,15 +125,15 @@ class Shy_Posts {
 	 * @return void
 	 */
 	private function setup() {
-		// the meta is exposed to the REST API for the block editor, so register it everywhere
+		// The meta is exposed to the REST API for the block editor, so register it everywhere.
 		add_action( 'init', array( $this, 'register_meta' ) );
 
-		// keep the stored list in sync however the meta changes: classic editor, block editor (REST), or post deletion
+		// Keep the stored list in sync however the meta changes: classic editor, block editor (REST), or post deletion.
 		add_action( 'added_post_meta', array( $this, 'meta_changed' ), 10, 4 );
 		add_action( 'updated_post_meta', array( $this, 'meta_changed' ), 10, 4 );
 		add_action( 'deleted_post_meta', array( $this, 'meta_deleted' ), 10, 3 );
 
-		// only do this in the admin area
+		// Only do this in the admin area.
 		if ( is_admin() ) {
 			add_action( 'save_post', array( $this, 'save' ) );
 			add_action( 'post_submitbox_misc_actions', array( $this, 'option_hide_in_publish' ) );
@@ -142,9 +142,9 @@ class Shy_Posts {
 			add_action( 'init', array( $this, 'load_textdomain' ) );
 		}
 
-		// only do this NOT in the admin area
+		// Only do this NOT in the admin area.
 		if ( ! is_admin() ) {
-			// filter the homepage loop
+			// Filter the homepage loop.
 			add_action( 'pre_get_posts', array( $this, 'exclude_shy_posts_from_homepage' ) );
 		}
 	}
@@ -170,12 +170,13 @@ class Shy_Posts {
 	public static function rebuild_shy_post_ids() {
 
 		$args = array(
-			'post_type'      => get_post_types(),
-			'post_status'    => 'any',
-			'no_found_rows'  => true,
-			'nopaging'       => true,
-			'fields'         => 'ids',
-			'meta_query'     => array(
+			'post_type'     => get_post_types(),
+			'post_status'   => 'any',
+			'no_found_rows' => true,
+			'nopaging'      => true,
+			'fields'        => 'ids',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Only runs on activation or when the stored list is missing.
+			'meta_query'    => array(
 				array(
 					'key'     => self::META_KEY,
 					'value'   => '1',
@@ -199,20 +200,22 @@ class Shy_Posts {
 	 * @return void
 	 */
 	public function load_textdomain() {
-		load_plugin_textdomain( 'shy-posts', false, plugin_basename( dirname( __FILE__ ) ) );
+		load_plugin_textdomain( 'shy-posts', false, plugin_basename( __DIR__ ) );
 	}
 
 	/**
 	 * Filter the post meta field so it doesn't appear in the Custom Fields list
 	 *
 	 * @access public
+	 * @param bool   $is_protected Whether the meta key is protected.
+	 * @param string $meta_key     Meta key being checked.
 	 * @return bool
 	 */
-	public function hide_field( $protected, $meta_key ) {
-		if ( self::META_KEY == $meta_key ) {
-			$protected = true;
+	public function hide_field( $is_protected, $meta_key ) {
+		if ( self::META_KEY === $meta_key ) {
+			$is_protected = true;
 		}
-		return $protected;
+		return $is_protected;
 	}
 
 	/**
@@ -229,7 +232,7 @@ class Shy_Posts {
 
 		$shy_post_ids = get_option( self::OPTION_NAME, false );
 
-		// missing (fresh install, or upgrading from the transient) so build it from post meta
+		// Missing (fresh install, or upgrading from the transient) so build it from post meta.
 		if ( ! is_array( $shy_post_ids ) ) {
 			$shy_post_ids = self::rebuild_shy_post_ids();
 		}
@@ -243,8 +246,8 @@ class Shy_Posts {
 	 * Add or remove a post ID from the stored list
 	 *
 	 * @access private
-	 * @param int  $post_id
-	 * @param bool $is_shy
+	 * @param int  $post_id Post to add or remove.
+	 * @param bool $is_shy  True to add the post, false to remove it.
 	 * @return void
 	 */
 	private function update_shy_post_ids( $post_id, $is_shy ) {
@@ -260,9 +263,8 @@ class Shy_Posts {
 
 		$this->shy_post_ids = array_values( array_unique( array_map( 'intval', $shy_post_ids ) ) );
 
-		// save it back
+		// Save it back.
 		update_option( self::OPTION_NAME, $this->shy_post_ids );
-
 	}
 
 	/**
@@ -275,18 +277,18 @@ class Shy_Posts {
 
 		global $post;
 
-		// Use nonce for verification
+		// Use nonce for verification.
 		wp_nonce_field( plugin_basename( __FILE__ ), 'shyposts_nonce' );
 
-		// Get the data
+		// Get the data.
 		$value = get_post_meta( $post->ID, self::META_KEY, true );
 
-		$title = esc_attr__( 'Removes this post from the homepage, but NOT from any other page', 'shy-posts' );
+		$title = __( 'Removes this post from the homepage, but NOT from any other page', 'shy-posts' );
 
-		// echo the meta box
+		// Echo the meta box.
 		echo '<div class="misc-pub-section misc-pub-section-last">';
-		echo '<input type="checkbox" id="shyposts_hide_field" name="shyposts_hide_field" value="1" ' . checked( $value, '1', false ) . ' title="' . $title . '"> ';
-		echo '<label for="shyposts_hide_field" title="' . $title . '">';
+		echo '<input type="checkbox" id="shyposts_hide_field" name="shyposts_hide_field" value="1" ' . checked( $value, '1', false ) . ' title="' . esc_attr( $title ) . '"> ';
+		echo '<label for="shyposts_hide_field" title="' . esc_attr( $title ) . '">';
 		echo esc_html__( 'Hide on the homepage?', 'shy-posts' );
 		echo '</label> ';
 		echo '</div>';
@@ -297,12 +299,12 @@ class Shy_Posts {
 	 * Updates post meta and the stored list with the form data
 	 *
 	 * @access public
-	 * @param int $post_id
+	 * @param int $post_id Post being saved.
 	 * @return void
 	 */
 	public function save( $post_id ) {
 
-		// Autosaves and revisions don't carry the checkbox's meaning
+		// Autosaves and revisions don't carry the checkbox's meaning.
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || wp_is_post_revision( $post_id ) ) {
 			return;
 		}
@@ -323,16 +325,15 @@ class Shy_Posts {
 			return;
 		}
 
-		// Unchecked checkboxes aren't submitted at all
+		// Unchecked checkboxes aren't submitted at all.
 		$is_shy = isset( $_POST['shyposts_hide_field'] ) && '1' === $_POST['shyposts_hide_field'];
 
-		// the meta hooks update the stored list
+		// The meta hooks update the stored list.
 		if ( $is_shy ) {
 			update_post_meta( $post_id, self::META_KEY, '1' );
 		} else {
 			delete_post_meta( $post_id, self::META_KEY );
 		}
-
 	}
 
 	/**
@@ -343,15 +344,19 @@ class Shy_Posts {
 	 * @return void
 	 */
 	public function register_meta() {
-		register_post_meta( '', self::META_KEY, array(
-			'type'              => 'boolean',
-			'single'            => true,
-			'default'           => false,
-			'show_in_rest'      => true,
-			'sanitize_callback' => array( $this, 'sanitize_meta' ),
-			// the key is protected, so editing over REST needs an explicit auth callback
-			'auth_callback'     => array( $this, 'can_edit_meta' ),
-		) );
+		register_post_meta(
+			'',
+			self::META_KEY,
+			array(
+				'type'              => 'boolean',
+				'single'            => true,
+				'default'           => false,
+				'show_in_rest'      => true,
+				'sanitize_callback' => array( $this, 'sanitize_meta' ),
+				// The key is protected, so editing over REST needs an explicit auth callback.
+				'auth_callback'     => array( $this, 'can_edit_meta' ),
+			)
+		);
 	}
 
 	/**
@@ -359,7 +364,7 @@ class Shy_Posts {
 	 *
 	 * @access public
 	 * @since 2.0
-	 * @param mixed $value
+	 * @param mixed $value Submitted meta value.
 	 * @return string
 	 */
 	public function sanitize_meta( $value ) {
@@ -371,6 +376,9 @@ class Shy_Posts {
 	 *
 	 * @access public
 	 * @since 2.0
+	 * @param bool   $allowed  Whether the user can edit the meta, before this check.
+	 * @param string $meta_key Meta key being edited.
+	 * @param int    $post_id  Post the meta belongs to.
 	 * @return bool
 	 */
 	public function can_edit_meta( $allowed, $meta_key, $post_id ) {
@@ -385,7 +393,7 @@ class Shy_Posts {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
-		// this hook also fires in the site and widget editors, which have no post to flag
+		// This hook also fires in the site and widget editors, which have no post to flag.
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		if ( ! $screen || 'post' !== $screen->base ) {
 			return;
@@ -407,10 +415,10 @@ class Shy_Posts {
 	 *
 	 * @access public
 	 * @since 2.0
-	 * @param int    $meta_id
-	 * @param int    $post_id
-	 * @param string $meta_key
-	 * @param mixed  $meta_value
+	 * @param int    $meta_id    ID of the meta row.
+	 * @param int    $post_id    Post the meta belongs to.
+	 * @param string $meta_key   Meta key that changed.
+	 * @param mixed  $meta_value New meta value.
 	 * @return void
 	 */
 	public function meta_changed( $meta_id, $post_id, $meta_key, $meta_value ) {
@@ -427,9 +435,9 @@ class Shy_Posts {
 	 *
 	 * @access public
 	 * @since 2.0
-	 * @param array  $meta_ids
-	 * @param int    $post_id
-	 * @param string $meta_key
+	 * @param array  $meta_ids IDs of the deleted meta rows.
+	 * @param int    $post_id  Post the meta belonged to.
+	 * @param string $meta_key Meta key that was deleted.
 	 * @return void
 	 */
 	public function meta_deleted( $meta_ids, $post_id, $meta_key ) {
@@ -444,11 +452,11 @@ class Shy_Posts {
 	 * Filter posts on homepage
 	 *
 	 * @access public
-	 * @param WP_Query $query
+	 * @param WP_Query $query Query about to run.
 	 * @return void
 	 */
 	public function exclude_shy_posts_from_homepage( $query ) {
-		// make sure we're looking in the right place
+		// Make sure we're looking in the right place.
 		if ( ! $query->is_main_query() || ! $query->is_front_page() ) {
 			return;
 		}
@@ -458,11 +466,10 @@ class Shy_Posts {
 			return;
 		}
 
-		// add to any exclusions something else already set, rather than replacing them
+		// Add to any exclusions something else already set, rather than replacing them.
 		$not_in = array_merge( (array) $query->get( 'post__not_in' ), $shy_post_ids );
 
 		$query->set( 'post__not_in', array_values( array_unique( array_map( 'intval', $not_in ) ) ) );
 	}
 
-// end class
 }
