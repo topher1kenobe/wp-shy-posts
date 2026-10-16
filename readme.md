@@ -5,16 +5,19 @@ Provides a checkbox on a post admin page to allow you to say that THIS post shou
 
 **Contributors:** [topher1kenobe](http://profiles.wordpress.org/topher1kenobe)  
 **Tags:** [posts](http://wordpress.org/plugins/tags/posts)  
-**Requires at least:** 3.0  
-**Tested up to:** 4.5.2  
-**Stable tag:** 1.3.3  
+**Requires at least:** 5.3  
+**Tested up to:** 7.1  
+**Stable tag:** 2.0.0  
 **License:** [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)  
+**Requires PHP:** 5.6  
 
 ## Description ##
 
 Provides a checkbox on a post admin page to allow you to say that THIS post should not appear on the homepage blog loop.
 
 This only works if your blog is on your homepage.
+
+Works in both the block editor (in the post status panel of the sidebar) and the Classic Editor (in the Publish box).
 
 ## Installation ##
 
@@ -34,6 +37,21 @@ I haven't been asked any yet.  :)
 
 
 ## Changelog ##
+
+### 2.0.0 ###
+* Block editor support: the checkbox now appears in the post status panel of the sidebar
+* Register the shy_post meta for the REST API
+* Keep the stored list in sync from post meta changes, so classic, block editor and deleted posts are all handled the same way
+* Requires WordPress 5.3 or later
+* Fix activation hook never firing, so existing shy posts are now picked up on activation
+* Store shy post IDs in an option instead of a transient, so they can't be evicted by an object cache
+* Rebuild the stored list from post meta automatically if it's missing (this also migrates from 1.3.x)
+* Fix PHP notice when saving a post with the checkbox unchecked
+* Fix malformed checkbox HTML
+* Skip autosaves and revisions on save, and stop storing duplicate IDs
+* Remove permanently deleted posts from the stored list
+* Merge with existing post__not_in exclusions on the homepage instead of replacing them
+* Remove unused composer.json
 
 ### 1.3.3 ###
 * Added load_plugin_textdomain to allow translations
